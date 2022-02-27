@@ -1,4 +1,4 @@
-# crypto-analyses
+# crypto-analysis
 
 Does on-chain analysis of bitcoin and analyzes the likelihood of impermanent loss in yield farming cryptocurrencies.
 
