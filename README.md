@@ -13,7 +13,7 @@ Does on-chain analysis of bitcoin and analyzes the likelihood of impermanent los
 * correlation_analysis.ipynb - Shows vizualization of how some cryptocurrencies' prices and returns correlate.
 * impermanent_loss.ipynb - Computes the impermanent loss of yield farming assuming that the amount of assets in the pool remains constant.
 * postgre_sql.ipynb - Fills data into a PostgreSQL database.
-* realized_metrics.ipynb - Vizualizes some on-chain metrics for bitcoin.
+* on-chain_metrics.ipynb - Vizualizes some on-chain metrics for bitcoin.
 * trial-and-error.ipynb - Notebook for trying out new stuff.
 
 **requirements:**
