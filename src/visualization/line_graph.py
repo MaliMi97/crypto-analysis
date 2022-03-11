@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 
 '''
 This python script contains functions, which are used in the creation of line graphs.
@@ -26,14 +27,17 @@ def impermanent_loss_vis(df, x, y, width=5, height=5, fontsize=40):
     '''
     fig = plt.figure(facecolor='white')
     ax = fig.add_axes([0,0,width,height])
+    s = pd.concat([df['to x'],df['to y'],df['to 50/50']])
+    plt.ylim(min(s)-0.1,max(s)+0.1)
     ax.set_ylabel('price', fontsize=fontsize)
     ax.tick_params(axis='y', labelsize=fontsize)
     ax.set_xlabel('time', fontsize=fontsize)
     ax.tick_params(axis='x', labelsize=fontsize)
     aux = [0 for i in range(len(df['time']))]
     ax.plot(df['time'], aux, color='black')
-    ax.plot(df['time'], df['% to x'], label=f"% to {x}")
-    ax.plot(df['time'], df['% to y'], label=f"% to {y}")
-    ax.plot(df['time'], df['% to 50/50'], label=f"% to 50/50")
+    ax.plot(df['time'], df['to x'], label=f"to {x}")
+    ax.plot(df['time'], df['to y'], label=f"to {y}")
+    ax.plot(df['time'], df['to 50/50'], label=f"to 50/50")
+    ax.plot([df['time'].loc[0],df['time'].loc[len(df)-1]],[1,1])
     ax.legend(fontsize=fontsize)
     plt.show()

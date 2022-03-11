@@ -1,6 +1,6 @@
 # crypto-analysis
 
-Does on-chain analysis of bitcoin and analyzes the likelihood of impermanent loss in yield farming cryptocurrencies.
+Does on-chain analysis of bitcoin and analyses the likelihood of impermanent loss in yield farming cryptocurrencies.
 
 **packages in src directory:**
 

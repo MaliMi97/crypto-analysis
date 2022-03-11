@@ -24,7 +24,7 @@ def impermanent_loss(df, initial_fiat, apy=0, rehypothecation_factor=1):
     The function adds additional columns to the dataset and counts the changes of fiat, how much fiat we would have if we had gone all in to token x, y or if we had gone for 50/50 split.
     It also counts how big of a percent of the initial investment we gained or lost.
     '''
-    df = df.reindex(columns = df.columns.tolist() + ['fiat', 'x', 'y', 'reward', 'all in x', 'all in y', '50/50', '% to x', '% to y', "% to 50/50"])
+    df = df.reindex(columns = df.columns.tolist() + ['fiat', 'x', 'y', 'reward', 'all in x', 'all in y', '50/50', 'to x', 'to y', "to 50/50"])
     df['fiat'].at[0] = initial_fiat
     df['x'].at[0] = 0.5*initial_fiat/df['price_x'].loc[0]
     df['y'].at[0] = 0.5*initial_fiat/df['price_y'].loc[0]
@@ -34,11 +34,11 @@ def impermanent_loss(df, initial_fiat, apy=0, rehypothecation_factor=1):
         df['x'].at[i] = aux[0]
         df['y'].at[i] = aux[1]
         df['fiat'].at[i] = aux[2]
-        df['reward'].at[i] = df['reward'].loc[i-1] + df['fiat'].loc[i-1]*apy*(1-rehypothecation_factor)
+        df['reward'].at[i] = df['reward'].loc[i-1] + df['fiat'].loc[i-1]*apy*(1-rehypothecation_factor)/df['price_reward'].loc[i]
     df['all in x'] = df['price_x']*2*df['x'].loc[0]
     df['all in y'] = df['price_y']*2*df['y'].loc[0]
     df['50/50'] = df['price_x']*df['x'].loc[0] + df['price_y']*df['y'].loc[0]
-    df['% to x'] = 100*(df['fiat']+df['reward']*df['price_reward'])/df['all in x']-100
-    df['% to y'] = 100*(df['fiat']+df['reward']*df['price_reward'])/df['all in y']-100
-    df['% to 50/50'] = 100*(df['fiat']+df['reward']*df['price_reward'])/df['50/50']-100
+    df['to x'] = (df['fiat']+df['reward']*df['price_reward'])/df['all in x']
+    df['to y'] = (df['fiat']+df['reward']*df['price_reward'])/df['all in y']
+    df['to 50/50'] = (df['fiat']+df['reward']*df['price_reward'])/df['50/50']
     return df
