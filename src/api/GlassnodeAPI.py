@@ -101,5 +101,25 @@ class GlassnodeAPI(API.API):
         Returns dataframe containing either daily (period='day') or weekly (period='week') new addresses holding coin (default is bitcoin) and the price of coin at that time.
         ''' 
         return self.get_closing_price(coin, period).merge(self.get_new_addresses(coin, period), on='time')
+
+    def get_number_of_transactions(self, coin='btc', period='day'):  
+        '''
+        Returns dataframe containing either daily (period='day') or weekly (period='week') new addresses holding coin (default is bitcoin).
+        ''' 
+        return self.get_dataframe_accumulation(\
+                self.get_response(self.base_api_path+"v1/metrics/transactions/count", {'a': coin, 'api_key': self.key}),\
+                ['time', 'number of transactions'], period)
+
+
+    def get_accumulation_trend_score_and_price(self, coin='btc', period='day'):  
+        '''
+        Returns dataframe containing either daily (period='day') or weekly (period='week') accumulation trend score for a coin (default is bitcoin).
+        ''' 
+        df = self.get_dataframe_no_accumulation(\
+                self.get_response(self.base_api_path+"v1/metrics/indicators/accumulation_trend_score", {'a': coin, 'api_key': self.key}),\
+                ['time', 'accumulation trend score'], period)
+        df[['price', 'score']] = df['accumulation trend score'].apply(pd.Series)
+        df = df.drop(['accumulation trend score'],axis=1)
+        return df
     
 
