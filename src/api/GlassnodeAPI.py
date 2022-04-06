@@ -117,9 +117,41 @@ class GlassnodeAPI(API.API):
         ''' 
         df = self.get_dataframe_no_accumulation(\
                 self.get_response(self.base_api_path+"v1/metrics/indicators/accumulation_trend_score", {'a': coin, 'api_key': self.key}),\
-                ['time', 'accumulation trend score'], period)
-        df[['price', 'score']] = df['accumulation trend score'].apply(pd.Series)
-        df = df.drop(['accumulation trend score'],axis=1)
+                ['time', 'aux'], period)
+        df[['price', 'score']] = df['aux'].apply(pd.Series)
+        df = df.drop(['aux'],axis=1)
         return df
+
+    def get_supply_last_active_over_one_year_ago(self, coin='btc', period='day'):
+        '''
+        Returns dataframe containing either daily (period='day') or weekly (period='week') percentage of a coin's (default is bitcoin) supply, which has laid dormant for at least one year.
+        ''' 
+        df = self.get_dataframe_no_accumulation(\
+                self.get_response(self.base_api_path+"v1/metrics/supply/active_more_1y_percent", {'a': coin, 'api_key': self.key}),\
+                ['time', 'active over 1 year ago %'], period)
+        return df
+
+    def get_supply_last_active_over_one_year_ago_and_price(self, coin='btc', period='day'):
+        '''
+        Returns dataframe containing either daily (period='day') or weekly (period='week') price of a coin (default is bitcoin) and the percentage of its supply, which has laid dormant for at least one year.
+        ''' 
+        return self.get_closing_price(coin, period).merge(self.get_supply_last_active_over_one_year_ago(coin, period), on='time')
+
+    def get_pi_cycle_top(self, coin='btc', period='day'):  
+        '''
+        Returns dataframe containing either daily (period='day') or weekly (period='week') pi cycle top for a coin (default is bitcoin).
+        ''' 
+        df = self.get_dataframe_no_accumulation(\
+                self.get_response(self.base_api_path+"v1/metrics/indicators/pi_cycle_top", {'a': coin, 'api_key': self.key}),\
+                ['time', 'aux'], period)
+        df[['pi 1', 'pi 2']] = df['aux'].apply(pd.Series)
+        df = df.drop(['aux'],axis=1)
+        return df
+
+    def get_pi_cycle_top_and_price(self, coin='btc', period='day'):  
+        '''
+        Returns dataframe containing either daily (period='day') or weekly (period='week') pi cycle top for a coin (default is bitcoin) and price.
+        ''' 
+        return self.get_closing_price(coin, period).merge(self.get_pi_cycle_top(coin, period), on='time')
     
 
