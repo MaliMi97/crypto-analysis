@@ -23,10 +23,10 @@ class CoinGeckoAPI(API.API):
     def next_sunday(self, _day):
         return datetime(year=_day.year, month=_day.month, day=_day.day) + timedelta(days = 6 - date.weekday(_day))
 
-    def endpoint_price_market_cap_volume(self, date_time_from, date_time_to, coin="bitcoin"):
+    def endpoint_price_market_cap_volume_from_to(self, date_time_from, date_time_to, coin="bitcoin"):
         '''
-        Endpoclosing_priceint for price, market cap and trading volume between date_time_from and date_time_to for a coin (default is bitcoin).
-        The data can be by hours or days depending on how much data we ask for and when were the data collected.
+        Endpoint for price, market cap and trading volume between date_time_from and date_time_to for a coin (default is bitcoin).
+        The data can be by hours or days depending on how much data we ask for and when the data was collected.
         '''
         return f"{self.base_api_path}coins/{coin}/market_chart/range?vs_currency=usd&from={self.unit_timestamp(date_time_from)}&to={self.unit_timestamp(date_time_to)}"
     
@@ -47,7 +47,7 @@ class CoinGeckoAPI(API.API):
                 raise Exception("the first monday is farther than the last sunday")
         else:
             raise Exception("The only viable periods are day and week")
-        response = self.get_response(self.endpoint_price_market_cap_volume(date_time_from, date_time_to, coin))
+        response = self.get_response(self.endpoint_price_market_cap_volume_from_to(date_time_from, date_time_to, coin))
         prices = np.array(response['prices'])
         df = pd.DataFrame(columns=['time','price', 'market cap', 'volume in $'])
         df[['time','price']] = prices
@@ -65,3 +65,23 @@ class CoinGeckoAPI(API.API):
             df = df.reset_index().drop('index', axis=1)
         df['volume'] = df['volume in $']/df['price']
         return df
+
+    def endpoint_price_market_cap(self, coin="bitcoin"):
+        '''
+        Endpoint for price, market cap and trading volume for a coin (default is bitcoin). Gets the whole history.
+        The data can be by hours or days depending on how much data we ask for and when the data was collected.
+        '''
+        return f"{self.base_api_path}coins/{coin}/market_chart?vs_currency=usd&days=max"
+
+
+    def endpoint_supported_coins(self):
+        '''
+        Returns the endpoint for all supported coins
+        '''
+        return f"{self.base_api_path}/coins/list"
+
+    def get_supported_coins(self):
+        '''
+        Gets list of all supported coins.
+        '''
+        return self.get_response(self.endpoint_supported_coins())

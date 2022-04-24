@@ -153,5 +153,18 @@ class GlassnodeAPI(API.API):
         Returns dataframe containing either daily (period='day') or weekly (period='week') pi cycle top for a coin (default is bitcoin) and price.
         ''' 
         return self.get_closing_price(coin, period).merge(self.get_pi_cycle_top(coin, period), on='time')
-    
 
+    def get_hash_rate(self, coin='btc', period='day'):  
+        '''
+        Returns dataframe containing either daily (period='day') or weekly (period='week') hash rate for a coin (default is bitcoin).
+        ''' 
+        df = self.get_dataframe_no_accumulation(\
+                self.get_response(self.base_api_path+"v1/metrics/mining/hash_rate_mean", {'a': coin, 'api_key': self.key}),\
+                ['time', 'hash rate'], period)
+        return df
+
+    def get_hash_rate_and_price(self, coin='btc', period='day'):  
+        '''
+        Returns dataframe containing either daily (period='day') or weekly (period='week') hash rate for a coin (default is bitcoin) and price.
+        ''' 
+        return self.get_closing_price(coin, period).merge(self.get_hash_rate(coin, period), on='time')
